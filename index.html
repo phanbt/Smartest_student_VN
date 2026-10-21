@@ -16,7 +16,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Lexend:wght@400;500;600&display=swap">
 <style>
   /* Layout: a quiz-show set on a chalkboard stage. The question and four lozenge answers sit centre stage;
-     the cookie ladder (Q1 at the bottom, Q10 at the top) stands at the right, and folds into a strip above the question on phones.
+     the cookie ladder (Q1 at the bottom, Q12 at the top) stands at the right, and folds into a strip above the question on phones.
      One deliberate look (a dark studio), so a single theme. */
   :root {
     --stage: #0D2724;
@@ -162,6 +162,8 @@
   .jar .cookie { font-size: 1.5rem; }
   .jar.bump { animation: bump .45s ease-out; }
   .jar small { font-family: var(--body); font-size: .8125rem; color: var(--muted); }
+  .jar small, .icon-btn { white-space: nowrap; }
+  .bar-right { flex-wrap: wrap; }
   .icon-btn {
     background: var(--panel); border: 1px solid var(--line); border-radius: 999px;
     padding: 8px 14px; font-size: .875rem; color: var(--muted);
@@ -300,11 +302,11 @@
   }
   .end-head p { margin: 4px 0 0; color: var(--chalk); max-width: 46ch; }
   .tray {
-    display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px;
+    display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 6px;
     background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px;
-    justify-items: center; font-size: clamp(1.5rem, 6.5vw, 3rem);
+    justify-items: center; font-size: clamp(1.5rem, 5vw, 2.75rem);
   }
-  @media (max-width: 420px) { .tray { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 10px; } }
+  @media (max-width: 640px) { .tray { grid-template-columns: repeat(6, minmax(0, 1fr)); row-gap: 10px; font-size: clamp(1.5rem, 9vw, 2.75rem); } }
   .tally { text-align: center; font-family: var(--display); font-size: 1.75rem; margin: -8px 0 0; }
   .tally small { font-family: var(--body); font-size: .9375rem; color: var(--muted); display: block; }
   .end-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
@@ -341,17 +343,17 @@
     <header class="marquee">
       <span class="pre">Ai Là</span>
       <h1>Học Sinh Thông Minh Nhất?</h1>
-      <p>Mười câu hỏi từ tám môn học. Mỗi câu trả lời đúng, bạn được bỏ một chiếc bánh quy vào hũ. Bạn có gom đủ mười chiếc không?</p>
+      <p>Mười hai câu hỏi từ chín môn học. Mỗi câu trả lời đúng, bạn được bỏ một chiếc bánh quy vào hũ. Bạn có gom đủ mười hai chiếc không?</p>
     </header>
 
     <div class="rules">
-      <div class="rule"><b>10 câu hỏi</b><span>Bắt đầu dễ, càng lên cao càng khó.</span></div>
+      <div class="rule"><b>12 câu hỏi</b><span>Bắt đầu dễ, càng lên cao càng khó.</span></div>
       <div class="rule"><b><i class="cookie"></i> 1 bánh quy</b><span>cho mỗi câu trả lời đúng. Trả lời sai thì không có bánh, nhưng bạn vẫn chơi tiếp.</span></div>
       <div class="rule"><b>2 quyền trợ giúp</b><span>50:50 và Hỏi thầy cô, mỗi quyền dùng một lần trong mỗi lượt chơi.</span></div>
     </div>
 
     <ul class="subjects" aria-label="Các môn học">
-      <li>Tiếng Anh</li><li>Toán</li><li>Khoa học</li><li>Vật lý</li>
+      <li>Tiếng Việt</li><li>Tiếng Anh</li><li>Toán</li><li>Khoa học</li><li>Vật lý</li>
       <li>Hóa học</li><li>Địa lý</li><li>Lịch sử</li><li>Văn học</li>
     </ul>
 
@@ -379,7 +381,7 @@
     <div class="play-grid">
       <div class="main">
         <div class="q-meta">
-          <span class="qnum">Câu <span id="qn">1</span><small>trong 10 câu</small></span>
+          <span class="qnum">Câu <span id="qn">1</span><small>trong 12 câu</small></span>
           <span class="subject" id="subject">Mathematics</span>
         </div>
 
@@ -438,12 +440,31 @@
 <script>
 (function () {
   var SUBJECTS = {
-    eng: 'Tiếng Anh', math: 'Toán', sci: 'Khoa học', phy: 'Vật lý',
+    vie: 'Tiếng Việt', eng: 'Tiếng Anh', math: 'Toán', sci: 'Khoa học', phy: 'Vật lý',
     chem: 'Hóa học', geo: 'Địa lý', hist: 'Lịch sử', lit: 'Văn học'
   };
 
   // [subject, level 1-3, question, correct answer, wrong, wrong, wrong, teacher's hint, explanation]
   var BANK = [
+    ['vie', 1, 'Từ nào trái nghĩa với "chăm chỉ"?', 'Lười biếng', 'Siêng năng', 'Cần cù', 'Chịu khó',
+      'Ba trong bốn đáp án có nghĩa giống nhau.', '"Chăm chỉ" là chịu khó làm việc, nên từ trái nghĩa là "lười biếng". Siêng năng, cần cù và chịu khó đều là từ đồng nghĩa với chăm chỉ.'],
+    ['vie', 1, 'Từ nào viết đúng chính tả?', 'Sạch sẽ', 'Sạch xẽ', 'Xạch sẽ', 'Sạch sẻ',
+      'Chú ý chữ "s" hay "x", và dấu hỏi hay dấu ngã.', 'Viết đúng là "sạch sẽ": cả hai tiếng đều bắt đầu bằng "s", và tiếng "sẽ" mang dấu ngã.'],
+    ['vie', 1, 'Trong câu "Con mèo đang ngủ trên ghế.", từ nào là động từ?', 'ngủ', 'mèo', 'ghế', 'trên',
+      'Động từ chỉ hoạt động hoặc trạng thái.', '"Ngủ" chỉ hoạt động của con mèo, nên là động từ. "Mèo" và "ghế" là danh từ.'],
+    ['vie', 2, 'Tiếng Việt có bao nhiêu thanh điệu?', '6', '5', '4', '7',
+      'Đừng quên thanh ngang, thanh không có dấu.', 'Tiếng Việt có 6 thanh: ngang, huyền, sắc, hỏi, ngã, nặng. Thanh ngang không có dấu, nên chỉ có 5 dấu thanh.'],
+    ['vie', 2, 'Câu tục ngữ "Ăn quả nhớ kẻ trồng cây" khuyên chúng ta điều gì?', 'Biết ơn người đã làm ra thành quả cho mình', 'Nên trồng nhiều cây ăn quả', 'Ăn trái cây tốt cho sức khỏe', 'Phải tự trồng cây lấy quả mà ăn',
+      'Hãy nghĩ đến người đã làm ra thứ mà ta đang được hưởng.', 'Câu tục ngữ khuyên ta biết ơn những người đã tạo ra thành quả mà mình được hưởng.'],
+    ['vie', 2, 'Từ nào là từ láy?', 'Long lanh', 'Bàn ghế', 'Sách vở', 'Quần áo',
+      'Từ láy có các tiếng lặp lại âm đầu hoặc vần.', '"Long lanh" là từ láy vì hai tiếng lặp lại âm đầu "l". Bàn ghế, sách vở, quần áo là từ ghép.'],
+    ['vie', 3, 'Câu "Mặt trời đỏ rực như một quả cầu lửa." dùng biện pháp tu từ nào?', 'So sánh', 'Nhân hóa', 'Điệp ngữ', 'Đảo ngữ',
+      'Chú ý từ "như".', 'Câu văn so sánh mặt trời với quả cầu lửa bằng từ "như", nên đây là biện pháp so sánh.'],
+    ['vie', 3, 'Câu ca dao "Công cha như núi Thái Sơn, nghĩa mẹ như nước trong nguồn chảy ra" nói về điều gì?', 'Công ơn to lớn của cha mẹ', 'Vẻ đẹp của núi non', 'Nguồn nước sạch', 'Một chuyến leo núi',
+      'Núi Thái Sơn rất cao, còn nước trong nguồn chảy mãi không cạn.', 'Câu ca dao ví công cha cao như núi, nghĩa mẹ dồi dào như nước nguồn, để nói về công ơn to lớn của cha mẹ.'],
+    ['vie', 3, 'Chủ ngữ trong câu "Những chú chim sẻ nhỏ đang hót líu lo." là gì?', 'Những chú chim sẻ nhỏ', 'đang hót', 'líu lo', 'đang hót líu lo',
+      'Chủ ngữ trả lời câu hỏi "Ai?" hoặc "Con gì?".', 'Chủ ngữ trả lời câu hỏi "Con gì đang hót?": những chú chim sẻ nhỏ. Phần "đang hót líu lo" là vị ngữ.'],
+
     ['eng', 1, 'Từ nào có nghĩa trái ngược với "ancient" (cổ xưa)?', 'Modern', 'Old', 'Broken', 'Huge',
       'Hãy nghĩ đến thứ gì đó mới tinh, như chiếc điện thoại đời mới nhất.', '"Ancient" nghĩa là rất cổ xưa, nên từ trái nghĩa là "modern", nghĩa là hiện đại, mới.'],
     ['eng', 1, 'Số nhiều của "child" (đứa trẻ) là gì?', 'Children', 'Childs', 'Childes', 'Childrens',
@@ -597,10 +618,11 @@
       'Cậu bé đã lừa dân làng nhiều lần.', 'Cậu bé nói dối nhiều đến nỗi khi sói đến thật, không ai tin cậu nữa. Nói dối sẽ làm mất lòng tin của mọi người.']
   ];
 
-  var LEVELS = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3];
+  var TOTAL = 12;
+  var LEVELS = [1, 1, 1, 1, 2, 2, 2, 2, 3, 3, 3, 3];
   var LEVEL_NAMES = ['', 'Warm-up', 'Getting harder', 'Brain-buster'];
   var LETTERS = 'ABCD';
-  var BEST_KEY = 'smartest-student-best-vi';
+  var BEST_KEY = 'smartest-student-best-vi-12';
   var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   var $ = function (id) { return document.getElementById(id); };
@@ -620,10 +642,10 @@
     return a;
   }
 
-  // One question from every subject plus two extra, easy questions first, no subject twice in a row.
+  // One question from every subject plus extras up to TOTAL, easy questions first, no subject twice in a row.
   function pickQuestions() {
     var keys = Object.keys(SUBJECTS);
-    var slots = keys.concat(shuffle(keys).slice(0, 2));
+    var slots = keys.concat(shuffle(keys).slice(0, TOTAL - keys.length));
     for (var tries = 0; tries < 50; tries++) {
       slots = shuffle(slots);
       if (slots.every(function (k, i) { return i === 0 || slots[i - 1] !== k; })) break;
@@ -673,7 +695,7 @@
   function renderStart() {
     var best = readBest();
     $('best').hidden = best === null;
-    if (best !== null) $('best').innerHTML = 'Kỷ lục trên thiết bị này: <strong>' + best + '/10 bánh quy</strong>';
+    if (best !== null) $('best').innerHTML = 'Kỷ lục trên thiết bị này: <strong>' + best + '/' + TOTAL + ' bánh quy</strong>';
     if (s.name) $('name').value = s.name;
     show('start');
   }
@@ -703,7 +725,7 @@
   function buildLadder() {
     var ol = $('ladder');
     ol.innerHTML = '';
-    for (var n = 10; n >= 1; n--) {
+    for (var n = TOTAL; n >= 1; n--) {
       var li = document.createElement('li');
       li.className = 'rung';
       li.innerHTML = '<span class="r-num">' + n + '</span><span class="r-sub"></span><span class="r-slot"></span>';
@@ -715,7 +737,7 @@
   function renderLadder(popIndex) {
     var rungs = $('ladder').children;
     for (var k = 0; k < rungs.length; k++) {
-      var n = 10 - k, idx = n - 1, li = rungs[k];
+      var n = TOTAL - k, idx = n - 1, li = rungs[k];
       var pick = s.picks[idx];
       li.className = 'rung' + (idx === s.i && s.phase === 'play' ? ' now' : '') + (pick !== null ? ' done' : '');
       var won = pick === 0;
@@ -771,7 +793,7 @@
       if (!right) $('fb-ans').querySelector('strong').textContent = LETTERS[correctPos] + ': ' + q[3];
       $('fb-ans').hidden = right;
       $('fb-why').textContent = q[8];
-      $('next').textContent = s.i < 9 ? 'Câu tiếp theo' : 'Xem kết quả';
+      $('next').textContent = s.i < TOTAL - 1 ? 'Câu tiếp theo' : 'Xem kết quả';
     }
 
     var n = score();
@@ -810,7 +832,7 @@
 
   function next() {
     if (!s.revealed) return;
-    if (s.i < 9) {
+    if (s.i < TOTAL - 1) {
       s.i += 1;
       s.revealed = false;
       renderPlay();
@@ -840,10 +862,10 @@
 
   /* ---------- Results ---------- */
   var RANKS = [
-    [10, 'Học Sinh Thông Minh Nhất!', 'Hũ bánh đầy ắp. Bạn đã trả lời đúng tất cả các câu hỏi.'],
-    [8, 'Học Sinh Xuất Sắc', 'Suýt nữa là đầy hũ rồi. Giỏi lắm!'],
-    [6, 'Ngôi Sao Sáng', 'Đúng hơn một nửa. Chơi thêm lần nữa để lấp đầy hũ nhé.'],
-    [3, 'Học Sinh Chăm Chỉ', 'Cố gắng tốt lắm! Hãy đọc đáp án bên dưới rồi thử lại nhé.'],
+    [12, 'Học Sinh Thông Minh Nhất!', 'Hũ bánh đầy ắp. Bạn đã trả lời đúng tất cả các câu hỏi.'],
+    [10, 'Học Sinh Xuất Sắc', 'Suýt nữa là đầy hũ rồi. Giỏi lắm!'],
+    [7, 'Ngôi Sao Sáng', 'Đúng hơn một nửa. Chơi thêm lần nữa để lấp đầy hũ nhé.'],
+    [4, 'Học Sinh Chăm Chỉ', 'Cố gắng tốt lắm! Hãy đọc đáp án bên dưới rồi thử lại nhé.'],
     [0, 'Nhà Thám Hiểm Tò Mò', 'Mỗi câu hỏi là một cơ hội để học điều mới. Thử lại nhé!']
   ];
 
@@ -856,7 +878,7 @@
     renderEnd(isBest && best !== null);
     show('end');
     $('again').focus({ preventScroll: true });
-    if (n >= 8) tone([523, 659, 784, 1047, 1319], 'triangle', 0.12, 0.16);
+    if (n >= 10) tone([523, 659, 784, 1047, 1319], 'triangle', 0.12, 0.16);
   }
 
   function renderEnd(newBest) {
@@ -868,13 +890,13 @@
 
     var tray = $('tray');
     tray.innerHTML = '';
-    for (var i = 0; i < 10; i++) {
+    for (var i = 0; i < TOTAL; i++) {
       var el = document.createElement('i');
       el.className = i < n ? 'cookie' : 'plate';
       if (i < n && !reduceMotion) { el.classList.add('pop'); el.style.animationDelay = (i * 0.08) + 's'; el.style.animationFillMode = 'backwards'; }
       tray.appendChild(el);
     }
-    $('tally').innerHTML = n + '/10 bánh quy<small>' + (newBest ? 'Kỷ lục mới trên thiết bị này!' : '') + '</small>';
+    $('tally').innerHTML = n + '/' + TOTAL + ' bánh quy<small>' + (newBest ? 'Kỷ lục mới trên thiết bị này!' : '') + '</small>';
 
     var ol = $('review');
     ol.innerHTML = '';
@@ -922,10 +944,10 @@
   // Keep a game in progress when the page is updated while it is open.
   function start(data) {
     var saved = data && data.s;
-    if (saved && saved.phase === 'play' && saved.qs && saved.qs.every(function (id) { return BANK[id]; })) {
+    if (saved && saved.phase === 'play' && saved.qs && saved.qs.length === TOTAL && saved.qs.every(function (id) { return BANK[id]; })) {
       s = saved;
       buildLadder(); renderPlay(); show('play');
-    } else if (saved && saved.phase === 'end' && saved.qs && saved.qs.every(function (id) { return BANK[id]; })) {
+    } else if (saved && saved.phase === 'end' && saved.qs && saved.qs.length === TOTAL && saved.qs.every(function (id) { return BANK[id]; })) {
       s = saved;
       buildLadder(); renderEnd(false); show('end');
     } else {
