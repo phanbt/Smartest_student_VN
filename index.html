@@ -1,0 +1,943 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>
+  :root { color-scheme: light; padding: env(safe-area-inset-top, 0px) 0 env(safe-area-inset-bottom, 0px); }
+  body { margin: 0; }
+  img { max-width: 100%; }
+  [hidden] { display: none !important; }
+</style>
+</head>
+<body>
+<title>Ai Là Học Sinh Thông Minh Nhất?</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@800&family=Lexend:wght@400;500;600&display=swap">
+<style>
+  /* Layout: a quiz-show set on a chalkboard stage. The question and four lozenge answers sit centre stage;
+     the cookie ladder (Q1 at the bottom, Q10 at the top) stands at the right, and folds into a strip above the question on phones.
+     One deliberate look (a dark studio), so a single theme. */
+  :root {
+    --stage: #0D2724;
+    --stage-hi: #1C4A43;
+    --panel: #0A1D1B;
+    --line: #2F5C55;
+    --chalk: #F4F1E6;
+    --muted: #A8C3BC;
+    --gold: #F6C343;
+    --gold-dim: #B98F2A;
+    --ink-on-gold: #2A1E05;
+    --lock: #FF9F1C;
+    --ok: #3DD68C;
+    --bad: #FF6B5E;
+    --ink-on-state: #0A1D1B;
+    --cookie: #C98A3E;
+    --cookie-hi: #E8B56A;
+    --chip: #4A2A14;
+    --display: "Baloo 2", "Arial Rounded MT Bold", "Trebuchet MS", sans-serif;
+    --body: "Lexend", "Segoe UI", system-ui, sans-serif;
+    color-scheme: dark;
+  }
+
+  * { box-sizing: border-box; }
+  html, body { min-height: 100%; }
+  body {
+    background:
+      radial-gradient(ellipse 80% 55% at 50% -8%, var(--stage-hi) 0, transparent 70%),
+      var(--stage);
+    color: var(--chalk);
+    font-family: var(--body);
+    font-size: 16px;
+    line-height: 1.5;
+    padding-left: max(16px, env(safe-area-inset-left, 0px));
+    padding-right: max(16px, env(safe-area-inset-right, 0px));
+    padding-block: 24px 48px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .wrap { max-width: 1040px; margin-inline: auto; }
+  button { font: inherit; color: inherit; cursor: pointer; }
+  button:disabled { cursor: default; }
+  :focus-visible { outline: 3px solid var(--gold); outline-offset: 3px; }
+
+  /* Cookie, drawn in CSS so it looks the same everywhere */
+  .cookie {
+    display: inline-block;
+    width: 1em; height: 1em;
+    border-radius: 50%;
+    vertical-align: -0.15em;
+    background:
+      radial-gradient(circle at 30% 34%, var(--chip) 0 7%, transparent 8%),
+      radial-gradient(circle at 63% 27%, var(--chip) 0 6%, transparent 7%),
+      radial-gradient(circle at 71% 62%, var(--chip) 0 8%, transparent 9%),
+      radial-gradient(circle at 37% 71%, var(--chip) 0 6%, transparent 7%),
+      radial-gradient(circle at 52% 49%, var(--chip) 0 4%, transparent 5%),
+      radial-gradient(circle at 38% 32%, var(--cookie-hi), var(--cookie) 72%);
+    box-shadow: inset -0.06em -0.08em 0 rgba(0, 0, 0, .22);
+  }
+  .plate {
+    display: inline-block;
+    width: 1em; height: 1em;
+    border-radius: 50%;
+    border: 2px dashed var(--line);
+    vertical-align: -0.15em;
+  }
+
+  /* ---------- Start screen ---------- */
+  .start { max-width: 640px; margin-inline: auto; display: flex; flex-direction: column; gap: 28px; padding-top: 12px; }
+  .marquee { text-align: center; display: flex; flex-direction: column; gap: 4px; }
+  .marquee .pre { font-family: var(--display); font-size: clamp(1.25rem, 5vw, 1.75rem); color: var(--muted); letter-spacing: .02em; }
+  .marquee h1 {
+    font-family: var(--display);
+    font-weight: 800;
+    font-size: clamp(2.4rem, 10vw, 4.25rem);
+    line-height: 1.15;
+    margin: 0;
+    color: var(--gold);
+    text-wrap: balance;
+    text-shadow: 0 4px 0 var(--ink-on-gold);
+  }
+  .marquee p { margin: 12px auto 0; color: var(--muted); max-width: 44ch; }
+
+  .rules { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+  .rule {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 14px;
+    display: flex; flex-direction: column; gap: 4px;
+  }
+  .rule b { font-family: var(--display); font-weight: 800; font-size: 1.5rem; line-height: 1.1; color: var(--gold); display: flex; align-items: center; gap: 8px; }
+  .rule span { color: var(--muted); font-size: .9375rem; }
+  @media (max-width: 560px) { .rules { grid-template-columns: minmax(0, 1fr); } }
+
+  .subjects { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; padding: 0; margin: 0; list-style: none; }
+  .subjects li { border: 1px solid var(--line); border-radius: 999px; padding: 4px 12px; font-size: .875rem; color: var(--chalk); }
+
+  .entry { display: flex; flex-direction: column; gap: 8px; }
+  .entry label { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
+  .entry-row { display: flex; gap: 12px; flex-wrap: wrap; }
+  .entry input {
+    flex: 1 1 220px; min-width: 0;
+    font: inherit; font-size: 1.125rem;
+    color: var(--chalk);
+    background: var(--panel);
+    border: 2px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+  }
+  .entry input::placeholder { color: var(--muted); opacity: .7; }
+  .entry input:focus { outline: none; border-color: var(--gold); }
+  .big-btn {
+    flex: 0 0 auto;
+    font-family: var(--display);
+    font-size: 1.375rem;
+    background: var(--gold);
+    color: var(--ink-on-gold);
+    border: 0;
+    border-radius: 12px;
+    padding: 12px 24px;
+    box-shadow: 0 4px 0 var(--gold-dim);
+    transition: transform .08s, box-shadow .08s;
+  }
+  .big-btn:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--gold-dim); }
+  .best { text-align: center; color: var(--muted); font-size: .9375rem; margin: 0; }
+  .lang { text-align: center; margin: -16px 0 0; font-size: .9375rem; }
+  .lang a { color: var(--gold); font-weight: 600; }
+  .best strong { color: var(--chalk); font-weight: 600; }
+
+  /* ---------- Show bar ---------- */
+  .showbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 20px; flex-wrap: wrap; }
+  .wordmark { font-family: var(--display); font-size: 1.125rem; color: var(--gold); line-height: 1.1; }
+  .wordmark small { display: block; font-family: var(--body); font-size: .75rem; color: var(--muted); letter-spacing: .08em; text-transform: uppercase; }
+  .bar-right { display: flex; align-items: center; gap: 10px; }
+  .jar {
+    display: flex; align-items: center; gap: 8px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 999px;
+    padding: 6px 14px 6px 10px;
+    font-family: var(--display); font-size: 1.375rem; line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+  .jar .cookie { font-size: 1.5rem; }
+  .jar.bump { animation: bump .45s ease-out; }
+  .jar small { font-family: var(--body); font-size: .8125rem; color: var(--muted); }
+  .icon-btn {
+    background: var(--panel); border: 1px solid var(--line); border-radius: 999px;
+    padding: 8px 14px; font-size: .875rem; color: var(--muted);
+  }
+
+  /* ---------- Play screen ---------- */
+  .play-grid { display: grid; grid-template-columns: minmax(0, 1fr) 248px; gap: 28px; align-items: start; }
+  .main { display: flex; flex-direction: column; gap: 18px; min-width: 0; }
+  .q-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap; }
+  .qnum { font-family: var(--display); font-size: 1.75rem; line-height: 1; }
+  .qnum small { font-family: var(--body); font-size: .9375rem; color: var(--muted); margin-left: 6px; }
+  .subject {
+    font-size: .75rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--ink-on-gold); background: var(--gold); border-radius: 999px; padding: 4px 12px;
+  }
+  .level { font-size: .8125rem; color: var(--muted); }
+
+  /* Lozenge shapes: an outer gold edge and an inner panel, both clipped to the same hexagon */
+  .q-card, .ans {
+    --tip: 22px;
+    position: relative;
+    clip-path: polygon(var(--tip) 0, calc(100% - var(--tip)) 0, 100% 50%, calc(100% - var(--tip)) 100%, var(--tip) 100%, 0 50%);
+    background: var(--gold-dim);
+    padding: 2px;
+  }
+  .q-in, .ans-in {
+    clip-path: polygon(calc(var(--tip) - 1px) 0, calc(100% - var(--tip) + 1px) 0, 100% 50%, calc(100% - var(--tip) + 1px) 100%, calc(var(--tip) - 1px) 100%, 0 50%);
+    background: var(--panel);
+  }
+  .q-in {
+    min-height: 120px;
+    display: grid; place-items: center;
+    padding: 22px calc(var(--tip) + 18px);
+    text-align: center;
+  }
+  .q-in p { margin: 0; font-size: clamp(1.125rem, 3.4vw, 1.4375rem); line-height: 1.45; font-weight: 500; text-wrap: balance; }
+
+  .answers { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 16px; }
+  @media (max-width: 600px) { .answers { grid-template-columns: minmax(0, 1fr); } .ans.gone { display: none; } }
+  .ans { --tip: 16px; border: 0; text-align: left; transition: background .15s, transform .08s; }
+  .ans-in {
+    min-height: 60px;
+    display: flex; align-items: center; gap: 10px;
+    padding: 10px calc(var(--tip) + 10px);
+    transition: background .15s, color .15s;
+  }
+  .ans-in b { font-family: var(--display); font-weight: 800; color: var(--gold); font-size: 1.25rem; line-height: 1; flex: none; }
+  .ans-in span { font-size: 1.0625rem; line-height: 1.35; min-width: 0; }
+  @media (hover: hover) { .ans:not(:disabled):hover { background: var(--gold); } .ans:not(:disabled):hover .ans-in { background: #12302C; } }
+  .ans:not(:disabled):active { transform: translateY(2px); }
+  .ans:focus-visible { outline: none; background: var(--chalk); }
+  .ans.gone { visibility: hidden; }
+  .ans.locked, .ans.locked .ans-in { background: var(--lock); }
+  .ans.locked .ans-in, .ans.locked .ans-in b { color: var(--ink-on-state); }
+  .ans.correct, .ans.correct .ans-in { background: var(--ok); }
+  .ans.correct .ans-in, .ans.correct .ans-in b { color: var(--ink-on-state); }
+  .ans.correct.win { animation: flash .5s ease-in-out 2; }
+  .ans.wrong, .ans.wrong .ans-in { background: var(--bad); }
+  .ans.wrong .ans-in, .ans.wrong .ans-in b { color: var(--ink-on-state); }
+  .ans.dim { opacity: .45; }
+
+  .helpers { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .helpers .label { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; margin-right: 4px; }
+  .helper {
+    display: inline-flex; align-items: center; gap: 8px;
+    background: transparent; border: 2px solid var(--gold); color: var(--gold);
+    border-radius: 999px; padding: 6px 16px 6px 8px; font-weight: 600; font-size: .9375rem;
+  }
+  .helper i {
+    font-style: normal; font-family: var(--display); font-size: .9375rem;
+    background: var(--gold); color: var(--ink-on-gold); border-radius: 999px; padding: 2px 8px;
+  }
+  .helper:disabled { border-color: var(--line); color: var(--muted); text-decoration: line-through; }
+  .helper:disabled i { background: var(--line); color: var(--muted); }
+
+  .teacher {
+    display: flex; gap: 12px; align-items: flex-start;
+    background: var(--chalk); color: var(--panel);
+    border-radius: 14px; padding: 12px 16px;
+  }
+  .teacher b { font-family: var(--display); font-weight: 800; font-size: 1.0625rem; flex: none; }
+  .teacher p { margin: 0; min-width: 0; }
+
+  .feedback {
+    border-radius: 16px; padding: 16px 18px;
+    background: var(--panel); border: 2px solid var(--line);
+    display: flex; flex-direction: column; gap: 10px;
+  }
+  .feedback.good { border-color: var(--ok); }
+  .feedback.bad { border-color: var(--bad); }
+  .fb-head { font-family: var(--display); font-size: 1.5rem; line-height: 1.15; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+  .feedback.good .fb-head { color: var(--ok); }
+  .feedback.bad .fb-head { color: var(--bad); }
+  .fb-head .cookie { font-size: 1.75rem; }
+  .feedback p { margin: 0; color: var(--chalk); max-width: 62ch; }
+  .feedback p.ans-line { color: var(--muted); }
+  .feedback p.ans-line strong { color: var(--chalk); font-weight: 600; }
+  .feedback .big-btn { align-self: flex-start; }
+
+  /* Cookie ladder */
+  .ladder { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 12px; }
+  .ladder h2 { font-family: var(--display); font-weight: 800; font-size: 1.125rem; margin: 2px 6px 10px; color: var(--gold); }
+  .ladder ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 3px; }
+  .rung {
+    display: grid; grid-template-columns: 2ch minmax(0, 1fr) auto; gap: 10px; align-items: center;
+    padding: 6px 10px; border-radius: 10px; color: var(--muted);
+    font-size: .9375rem;
+  }
+  .r-num { font-family: var(--display); font-size: 1.0625rem; text-align: right; font-variant-numeric: tabular-nums; }
+  .r-sub { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .r-slot { font-size: 1.375rem; line-height: 1; display: grid; place-items: center; width: 1em; height: 1em; }
+  .rung.done { color: var(--chalk); }
+  .rung.now { background: var(--gold); color: var(--ink-on-gold); }
+  .rung.now .plate { border-color: var(--gold-dim); }
+  .rung .cookie.pop { animation: pop .6s cubic-bezier(.2, 1.6, .4, 1); }
+
+  @media (max-width: 820px) {
+    .play-grid { grid-template-columns: minmax(0, 1fr); gap: 18px; }
+    .ladder { order: -1; padding: 10px; }
+    .ladder h2 { display: none; }
+    .ladder ol { flex-direction: row-reverse; justify-content: space-between; gap: 2px; }
+    .rung { grid-template-columns: auto; justify-items: center; gap: 4px; padding: 6px 2px; flex: 1 1 0; min-width: 0; }
+    .r-sub { display: none; }
+    .r-num { text-align: center; font-size: .9375rem; }
+    .r-slot { font-size: clamp(1rem, 4.6vw, 1.375rem); }
+  }
+
+  /* ---------- Results ---------- */
+  .end { max-width: 720px; margin-inline: auto; display: flex; flex-direction: column; gap: 24px; }
+  .end-head { text-align: center; display: flex; flex-direction: column; gap: 6px; align-items: center; }
+  .end-head .pre { font-size: .8125rem; text-transform: uppercase; letter-spacing: .12em; color: var(--muted); font-weight: 600; }
+  .end-head h1 {
+    font-family: var(--display); font-weight: 800; margin: 0;
+    font-size: clamp(2.2rem, 9vw, 3.75rem); line-height: 1.15; color: var(--gold);
+    text-shadow: 0 4px 0 var(--ink-on-gold); text-wrap: balance;
+  }
+  .end-head p { margin: 4px 0 0; color: var(--chalk); max-width: 46ch; }
+  .tray {
+    display: grid; grid-template-columns: repeat(10, minmax(0, 1fr)); gap: 6px;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 18px; padding: 16px;
+    justify-items: center; font-size: clamp(1.5rem, 6.5vw, 3rem);
+  }
+  @media (max-width: 420px) { .tray { grid-template-columns: repeat(5, minmax(0, 1fr)); row-gap: 10px; } }
+  .tally { text-align: center; font-family: var(--display); font-size: 1.75rem; margin: -8px 0 0; }
+  .tally small { font-family: var(--body); font-size: .9375rem; color: var(--muted); display: block; }
+  .end-actions { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+  .review { display: flex; flex-direction: column; gap: 10px; }
+  .review h2 { font-family: var(--display); font-weight: 800; font-size: 1.375rem; margin: 0; color: var(--gold); }
+  .review ol { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+  .review li {
+    display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 4px 14px; align-items: start;
+    background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px;
+  }
+  .review .mark { grid-row: span 3; font-size: 1.5rem; line-height: 1; padding-top: 2px; }
+  .review .meta { font-size: .75rem; text-transform: uppercase; letter-spacing: .1em; color: var(--muted); font-weight: 600; }
+  .review .qt { margin: 0; }
+  .review .yours { margin: 0; font-size: .9375rem; color: var(--muted); }
+  .review .yours strong { color: var(--chalk); font-weight: 600; }
+  .review .yours .no { color: var(--bad); }
+  .review .yours .yes { color: var(--ok); }
+
+  .marquee .pre, .big-btn, .wordmark, .jar, .qnum, .helper i, .fb-head, .r-num, .tally { font-weight: 800; }
+  .jar small, .qnum small, .wordmark small, .tally small { font-weight: 400; }
+
+  @keyframes pop { 0% { transform: scale(0) rotate(-90deg); } 100% { transform: scale(1) rotate(0); } }
+  @keyframes bump { 0%, 100% { transform: scale(1); } 40% { transform: scale(1.15); } }
+  @keyframes flash { 50% { filter: brightness(1.25); } }
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<div class="wrap">
+
+  <!-- Start -->
+  <section class="start" id="start">
+    <header class="marquee">
+      <span class="pre">Ai Là</span>
+      <h1>Học Sinh Thông Minh Nhất?</h1>
+      <p>Mười câu hỏi từ tám môn học. Mỗi câu trả lời đúng, bạn được bỏ một chiếc bánh quy vào hũ. Bạn có gom đủ mười chiếc không?</p>
+    </header>
+
+    <div class="rules">
+      <div class="rule"><b>10 câu hỏi</b><span>Bắt đầu dễ, càng lên cao càng khó.</span></div>
+      <div class="rule"><b><i class="cookie"></i> 1 bánh quy</b><span>cho mỗi câu trả lời đúng. Trả lời sai thì không có bánh, nhưng bạn vẫn chơi tiếp.</span></div>
+      <div class="rule"><b>2 quyền trợ giúp</b><span>50:50 và Hỏi thầy cô, mỗi quyền dùng một lần trong mỗi lượt chơi.</span></div>
+    </div>
+
+    <ul class="subjects" aria-label="Các môn học">
+      <li>Tiếng Anh</li><li>Toán</li><li>Khoa học</li><li>Vật lý</li>
+      <li>Hóa học</li><li>Địa lý</li><li>Lịch sử</li><li>Văn học</li>
+    </ul>
+
+    <form class="entry" id="entry">
+      <label for="name">Tên của bạn</label>
+      <div class="entry-row">
+        <input id="name" type="text" maxlength="20" autocomplete="off" placeholder="Ví dụ: Minh Anh">
+        <button class="big-btn" type="submit">Bắt đầu</button>
+      </div>
+    </form>
+    <p class="best" id="best" hidden></p>
+    <p class="lang"><a href="https://phanbt.github.io/smartest-student/" lang="en">English</a></p>
+  </section>
+
+  <!-- Play -->
+  <section id="play" hidden>
+    <div class="showbar">
+      <div class="wordmark"><small>Ai Là</small>Học Sinh Thông Minh Nhất?</div>
+      <div class="bar-right">
+        <div class="jar" id="jar" aria-live="polite"><i class="cookie" aria-hidden="true"></i><span id="jar-n">0</span><small id="jar-who">bánh quy</small></div>
+        <button class="icon-btn" id="sound" type="button" aria-pressed="true">Âm thanh: bật</button>
+      </div>
+    </div>
+
+    <div class="play-grid">
+      <div class="main">
+        <div class="q-meta">
+          <span class="qnum">Câu <span id="qn">1</span><small>trong 10 câu</small></span>
+          <span class="subject" id="subject">Mathematics</span>
+        </div>
+
+        <div class="q-card"><div class="q-in"><p id="qtext"></p></div></div>
+
+        <div class="answers" id="answers">
+          <button class="ans" type="button" data-pos="0"><span class="ans-in"><b>A</b><span></span></span></button>
+          <button class="ans" type="button" data-pos="1"><span class="ans-in"><b>B</b><span></span></span></button>
+          <button class="ans" type="button" data-pos="2"><span class="ans-in"><b>C</b><span></span></span></button>
+          <button class="ans" type="button" data-pos="3"><span class="ans-in"><b>D</b><span></span></span></button>
+        </div>
+
+        <div class="teacher" id="teacher" hidden><b>Thầy cô gợi ý:</b><p id="hint"></p></div>
+
+        <div class="helpers" id="helpers">
+          <span class="label">Trợ giúp</span>
+          <button class="helper" id="fifty" type="button"><i>50:50</i>Bỏ hai đáp án</button>
+          <button class="helper" id="ask" type="button"><i>?</i>Hỏi thầy cô</button>
+        </div>
+
+        <div class="feedback" id="feedback" hidden aria-live="polite">
+          <div class="fb-head" id="fb-head"></div>
+          <p class="ans-line" id="fb-ans"></p>
+          <p id="fb-why"></p>
+          <button class="big-btn" id="next" type="button">Câu tiếp theo</button>
+        </div>
+      </div>
+
+      <aside class="ladder" aria-label="Thang bánh quy">
+        <h2>Thang bánh quy</h2>
+        <ol id="ladder"></ol>
+      </aside>
+    </div>
+  </section>
+
+  <!-- Results -->
+  <section class="end" id="end" hidden>
+    <header class="end-head">
+      <span class="pre" id="end-pre">Kết quả</span>
+      <h1 id="end-title"></h1>
+      <p id="end-line"></p>
+    </header>
+    <div class="tray" id="tray" aria-hidden="true"></div>
+    <p class="tally" id="tally"></p>
+    <div class="end-actions">
+      <button class="big-btn" id="again" type="button">Chơi lại</button>
+    </div>
+    <div class="review">
+      <h2>Kết quả từng câu</h2>
+      <ol id="review"></ol>
+    </div>
+  </section>
+
+</div>
+
+<script>
+(function () {
+  var SUBJECTS = {
+    eng: 'Tiếng Anh', math: 'Toán', sci: 'Khoa học', phy: 'Vật lý',
+    chem: 'Hóa học', geo: 'Địa lý', hist: 'Lịch sử', lit: 'Văn học'
+  };
+
+  // [subject, level 1-3, question, correct answer, wrong, wrong, wrong, teacher's hint, explanation]
+  var BANK = [
+    ['eng', 1, 'Từ nào có nghĩa trái ngược với "ancient" (cổ xưa)?', 'Modern', 'Old', 'Broken', 'Huge',
+      'Hãy nghĩ đến thứ gì đó mới tinh, như chiếc điện thoại đời mới nhất.', '"Ancient" nghĩa là rất cổ xưa, nên từ trái nghĩa là "modern", nghĩa là hiện đại, mới.'],
+    ['eng', 1, 'Số nhiều của "child" (đứa trẻ) là gì?', 'Children', 'Childs', 'Childes', 'Childrens',
+      'Danh từ này không chỉ thêm "s" ở cuối.', '"Child" có dạng số nhiều bất quy tắc: one child, two children.'],
+    ['eng', 1, 'Điền vào chỗ trống: "Yesterday, we ___ to the zoo."', 'went', 'go', 'goes', 'going',
+      'Từ "yesterday" (hôm qua) cho biết hành động đã xảy ra trong quá khứ.', '"Went" là thì quá khứ của "go", và "yesterday" cho biết việc đó đã xảy ra rồi.'],
+    ['eng', 2, 'Từ nào có nghĩa gần giống với "enormous" (to lớn)?', 'Gigantic', 'Tiny', 'Noisy', 'Gentle',
+      'Từ này có thể dùng để tả một con voi.', '"Enormous" và "gigantic" đều có nghĩa là cực kỳ to lớn. Những từ có nghĩa gần giống nhau gọi là từ đồng nghĩa.'],
+    ['eng', 2, 'Từ nào là trạng từ (adverb)? "The tortoise moved slowly across the road."', 'slowly', 'tortoise', 'moved', 'road',
+      'Trạng từ cho biết hành động được làm như thế nào. Nhiều trạng từ kết thúc bằng "-ly".', '"Slowly" (một cách chậm rãi) cho biết con rùa di chuyển như thế nào, nên nó là trạng từ.'],
+    ['eng', 2, 'Từ tiếng Anh nào được viết đúng chính tả?', 'necessary', 'neccessary', 'necesary', 'neccesary',
+      'Mẹo nhớ: một chữ "c", hai chữ "s".', '"Necessary" (cần thiết) có một chữ "c" và hai chữ "s".'],
+    ['eng', 3, 'Câu nào có dùng phép so sánh (simile)?', 'Her smile was as bright as the sun.', 'The wind howled all night.', 'Time is money.', 'Buzz went the busy bee.',
+      'Phép so sánh dùng "as" hoặc "like" để so sánh hai sự vật.', 'Phép so sánh dùng "as" hoặc "like". "As bright as the sun" (rạng rỡ như mặt trời) là một phép so sánh.'],
+    ['eng', 3, 'Nếu bài kiểm tra là "a piece of cake", thì bài đó thế nào?', 'Rất dễ', 'Rất ngon', 'Rất ngắn', 'Rất bất ngờ',
+      'Đây là một thành ngữ. Nó không liên quan đến đồ ăn thật.', '"A piece of cake" (một miếng bánh) là thành ngữ có nghĩa là việc gì đó rất dễ làm.'],
+    ['eng', 3, 'Chọn câu hỏi đuôi đúng: "You are coming to the party, ___?"', "aren't you", "isn't you", "don't you", "won't you",
+      'Dùng cùng trợ động từ như trong câu, nhưng ở dạng phủ định.', 'Câu dùng "are", nên câu hỏi đuôi là "aren\'t you?"'],
+
+    ['math', 1, '7 × 8 bằng bao nhiêu?', '56', '54', '48', '63',
+      '7 × 7 bằng 49. Cộng thêm một số 7 nữa.', '7 × 8 = 56. Mẹo nhớ: 5, 6, 7, 8 → 56 = 7 × 8.'],
+    ['math', 1, 'Hình lục giác có bao nhiêu cạnh?', '6', '5', '7', '8',
+      'Hãy nhìn các ô trong tổ ong.', 'Hình lục giác có 6 cạnh. Hình ngũ giác có 5 cạnh và hình bát giác có 8 cạnh.'],
+    ['math', 1, 'Ali mua một chiếc bánh curry puff giá $1,80 và trả bằng tờ $10. Ali được trả lại bao nhiêu tiền?', '$8,20', '$8,80', '$9,20', '$7,20',
+      'Đếm từ $1,80 lên $2, rồi từ $2 lên $10.', '$10,00 − $1,80 = $8,20.'],
+    ['math', 2, '3/4 của 24 là bao nhiêu?', '18', '16', '12', '20',
+      'Trước tiên tìm 1/4 của 24, rồi nhân với 3.', '1/4 của 24 là 6, nên 3/4 của 24 là 6 × 3 = 18.'],
+    ['math', 2, 'Một hình chữ nhật dài 9 cm và rộng 6 cm. Diện tích của nó là bao nhiêu?', '54 cm²', '30 cm²', '15 cm²', '45 cm²',
+      'Diện tích hình chữ nhật = chiều dài × chiều rộng.', 'Diện tích = 9 cm × 6 cm = 54 cm². (30 cm là chu vi của nó.)'],
+    ['math', 2, '0,5 viết dưới dạng phần trăm là bao nhiêu?', '50%', '5%', '0,5%', '15%',
+      'Nhân số thập phân với 100.', '0,5 × 100 = 50, nên 0,5 = 50%. Đó chính là một nửa.'],
+    ['math', 3, 'Một chuyến tàu khởi hành lúc 9 giờ 45 sáng. Hành trình kéo dài 1 giờ 35 phút. Tàu đến nơi lúc mấy giờ?', '11 giờ 20 sáng', '10 giờ 20 sáng', '11 giờ 10 sáng', '11 giờ 30 sáng',
+      'Cộng 1 giờ trước, rồi cộng thêm 35 phút.', '9 giờ 45 + 1 giờ = 10 giờ 45. Rồi 10 giờ 45 + 35 phút = 11 giờ 20.'],
+    ['math', 3, 'Trung bình cộng của 12, 15, 18 và 23 là bao nhiêu?', '17', '16', '18', '17,5',
+      'Cộng tất cả các số lại, rồi chia cho số lượng các số.', '12 + 15 + 18 + 23 = 68, và 68 : 4 = 17.'],
+    ['math', 3, 'Tỉ số học sinh nam và học sinh nữ trong một lớp là 3 : 5. Lớp có 40 học sinh. Có bao nhiêu học sinh nữ?', '25', '15', '24', '20',
+      'Có 3 + 5 = 8 phần bằng nhau. Mỗi phần có bao nhiêu học sinh?', '8 phần = 40 học sinh, nên 1 phần = 5. Học sinh nữ chiếm 5 phần: 5 × 5 = 25.'],
+
+    ['sci', 1, 'Bộ phận nào của cây hút nước từ đất?', 'Rễ', 'Lá', 'Hoa', 'Quả',
+      'Bộ phận này mọc dưới mặt đất.', 'Rễ hút nước và muối khoáng từ đất, đồng thời giữ cho cây đứng vững.'],
+    ['sci', 1, 'Con vật nào sau đây là động vật có vú?', 'Cá voi', 'Cá mập', 'Chim cánh cụt', 'Cá sấu',
+      'Động vật có vú thở bằng phổi và nuôi con bằng sữa.', 'Cá voi thở bằng phổi và nuôi con bằng sữa, nên chúng là động vật có vú, dù sống dưới biển.'],
+    ['sci', 1, 'Côn trùng có bao nhiêu chân?', '6', '8', '4', '10',
+      'Nhện có 8 chân, nhưng nhện không phải là côn trùng.', 'Mọi loài côn trùng đều có 6 chân và cơ thể chia làm 3 phần. Nhện có 8 chân nên không phải côn trùng.'],
+    ['sci', 2, 'Cây hấp thụ khí nào để tự tạo ra thức ăn?', 'Khí carbon dioxide', 'Khí oxygen', 'Khí nitrogen', 'Khí helium',
+      'Đó là khí mà chúng ta thở ra.', 'Trong quá trình quang hợp, cây dùng khí carbon dioxide, nước và năng lượng ánh sáng để tạo ra thức ăn, rồi thải ra khí oxygen.'],
+    ['sci', 2, 'Thứ tự đúng trong vòng đời của bướm là gì?', 'Trứng → sâu → nhộng → bướm', 'Trứng → nhộng → sâu → bướm', 'Sâu → trứng → nhộng → bướm', 'Nhộng → trứng → sâu → bướm',
+      'Con sâu xuất hiện trước cái kén.', 'Bướm nở ra từ trứng thành sâu (ấu trùng), sâu hóa nhộng (kén), rồi chui ra thành bướm trưởng thành.'],
+    ['sci', 2, 'Cơ quan nào bơm máu đi khắp cơ thể?', 'Tim', 'Phổi', 'Dạ dày', 'Thận',
+      'Hãy đặt tay lên ngực và cảm nhận nhịp đập.', 'Tim bơm máu đến mọi bộ phận của cơ thể. Tim thuộc hệ tuần hoàn.'],
+    ['sci', 3, 'Hệ cơ quan nào phân giải thức ăn thành những chất đơn giản hơn?', 'Hệ tiêu hóa', 'Hệ hô hấp', 'Hệ tuần hoàn', 'Hệ xương',
+      'Hệ này gồm dạ dày và ruột.', 'Hệ tiêu hóa phân giải thức ăn để cơ thể có thể hấp thụ.'],
+    ['sci', 3, 'Để ngăn muỗi sinh sản trong nhà, chúng ta nên loại bỏ thứ gì?', 'Nước đọng', 'Lá khô', 'Ánh nắng', 'Không khí trong lành',
+      'Muỗi đẻ trứng ở đây.', 'Muỗi đẻ trứng trong nước đọng, chẳng hạn như ở đĩa lót chậu cây. Loại bỏ nước đọng giúp phòng bệnh sốt xuất huyết.'],
+    ['sci', 3, 'Sinh vật nào sau đây là một loại nấm?', 'Nấm rơm', 'Dương xỉ', 'Rêu', 'Rong biển',
+      'Nó không tự tạo ra thức ăn và sinh sản bằng bào tử.', 'Nấm rơm là nấm, không thể tự tạo ra thức ăn. Dương xỉ và rêu là thực vật, còn rong biển là một loại tảo.'],
+
+    ['phy', 1, 'Nam châm hút vật nào sau đây?', 'Chiếc đinh sắt', 'Cây thước nhựa', 'Cây bút chì gỗ', 'Viên bi thủy tinh',
+      'Nam châm hút một số kim loại.', 'Nam châm hút các vật liệu từ tính như sắt, thép, niken và coban. Nhựa, gỗ và thủy tinh không bị nam châm hút.'],
+    ['phy', 1, 'Lực nào kéo mọi vật rơi về phía Trái Đất?', 'Trọng lực', 'Lực ma sát', 'Lực từ', 'Sức cản không khí',
+      'Đó là lý do quả bóng rơi xuống khi bạn thả tay.', 'Trọng lực kéo mọi vật về phía Trái Đất. Vì vậy đồ vật rơi xuống chứ không bay lên.'],
+    ['phy', 1, 'Vật nào sau đây tự phát ra ánh sáng?', 'Mặt Trời', 'Mặt Trăng', 'Cái gương', 'Viên kim cương',
+      'Một số vật chỉ phản chiếu ánh sáng từ nơi khác.', 'Mặt Trời là nguồn sáng. Mặt Trăng, cái gương và viên kim cương chỉ phản chiếu ánh sáng.'],
+    ['phy', 2, 'Vật liệu nào dẫn điện tốt?', 'Đồng', 'Cao su', 'Gỗ', 'Nhựa',
+      'Lõi dây điện bên trong lớp vỏ nhựa được làm bằng vật liệu này.', 'Đồng là kim loại và cho dòng điện chạy qua dễ dàng. Cao su, gỗ và nhựa là chất cách điện.'],
+    ['phy', 2, 'Khi xoa hai bàn tay vào nhau, tay bạn ấm lên. Lực nào gây ra điều này?', 'Lực ma sát', 'Trọng lực', 'Lực từ', 'Lực đàn hồi',
+      'Lực này xuất hiện khi hai bề mặt cọ xát vào nhau.', 'Lực ma sát giữa hai bề mặt cọ xát biến động năng thành nhiệt năng.'],
+    ['phy', 2, 'Bóng của một vật được tạo thành như thế nào?', 'Vật chắn ánh sáng', 'Ánh sáng phản chiếu từ gương', 'Vật tự phát ra ánh sáng', 'Ánh sáng xuyên qua kính trong',
+      'Hãy nghĩ xem vì sao dưới gốc cây lại có bóng râm.', 'Bóng được tạo thành khi một vật cản sáng chắn ánh sáng, khiến ánh sáng không chiếu tới được phía sau vật.'],
+    ['phy', 3, 'Âm thanh truyền nhanh nhất qua môi trường nào?', 'Thép', 'Nước', 'Không khí', 'Khoảng không vũ trụ',
+      'Âm thanh truyền nhanh hơn khi các hạt xếp sát nhau.', 'Âm thanh truyền nhanh nhất trong chất rắn như thép, chậm hơn trong nước, chậm hơn nữa trong không khí, và không truyền được trong chân không.'],
+    ['phy', 3, 'Trong đèn pin chạy bằng pin, năng lượng chuyển hóa như thế nào?', 'Hóa năng → điện năng → quang năng', 'Quang năng → điện năng → hóa năng', 'Động năng → âm năng → quang năng', 'Nhiệt năng → hóa năng → âm năng',
+      'Năng lượng ban đầu được dự trữ trong cục pin.', 'Cục pin dự trữ hóa năng, chuyển thành điện năng, rồi bóng đèn biến điện năng thành quang năng (ánh sáng) và một ít nhiệt năng.'],
+    ['phy', 3, 'Khi có giông, vì sao ta thấy tia chớp trước khi nghe tiếng sấm?', 'Ánh sáng truyền nhanh hơn âm thanh', 'Tiếng sấm xảy ra sau', 'Mắt ta ở gần bầu trời hơn', 'Âm thanh truyền nhanh hơn ánh sáng',
+      'Cả hai xảy ra cùng một lúc. Hãy so sánh tốc độ của chúng.', 'Chớp và sấm xảy ra cùng lúc, nhưng ánh sáng truyền nhanh hơn âm thanh khoảng một triệu lần, nên ta thấy chớp trước.'],
+
+    ['chem', 1, 'Nước tinh khiết đóng băng ở nhiệt độ nào?', '0°C', '100°C', '37°C', '50°C',
+      'Đó là số nhỏ nhất trong các đáp án.', 'Nước tinh khiết đóng băng thành nước đá ở 0°C. 100°C là nhiệt độ sôi của nước, còn 37°C là thân nhiệt của chúng ta.'],
+    ['chem', 1, 'Chất nào sau đây ở thể khí?', 'Hơi nước', 'Nước đá', 'Sữa', 'Cát',
+      'Bạn có thể thấy nó bốc lên từ ấm nước đang sôi.', 'Hơi nước là nước ở thể khí. Nước đá là chất rắn, sữa là chất lỏng và cát là chất rắn.'],
+    ['chem', 1, 'Điều gì xảy ra với chiếc đinh sắt để ngoài mưa lâu ngày?', 'Bị gỉ sét', 'Bị tan chảy', 'Bị bay hơi', 'Biến thành thủy tinh',
+      'Hãy tìm một lớp màu nâu đỏ.', 'Sắt phản ứng với nước và khí oxygen trong không khí tạo thành gỉ sét màu nâu đỏ, dễ bong tróc.'],
+    ['chem', 2, 'Ở mực nước biển, nước sôi ở nhiệt độ nào?', '100°C', '0°C', '80°C', '50°C',
+      'Đó là một số tròn.', 'Ở mực nước biển, nước sôi ở 100°C và biến thành hơi nước.'],
+    ['chem', 2, 'Khi khuấy muối vào nước, muối dường như biến mất. Muối đã làm gì?', 'Hòa tan', 'Tan chảy', 'Bay hơi', 'Đông đặc',
+      'Nước vẫn có vị mặn, nghĩa là muối vẫn còn trong đó.', 'Muối đã hòa tan: nó phân bố đều trong nước. Tan chảy cần nhiệt, đó là hiện tượng khác.'],
+    ['chem', 2, 'Kí hiệu hóa học của oxygen là gì?', 'O', 'Ox', 'Og', 'Oy',
+      'Chỉ có một chữ cái.', 'Kí hiệu của oxygen là O. Nước, H₂O, có chứa oxygen.'],
+    ['chem', 3, 'Kí hiệu hóa học của vàng là gì?', 'Au', 'Ag', 'Va', 'Vg',
+      'Kí hiệu này bắt nguồn từ "aurum", tiếng La-tinh của vàng.', 'Vàng có kí hiệu Au, từ chữ La-tinh "aurum". Ag là bạc, từ chữ "argentum".'],
+    ['chem', 3, 'Nước (H₂O) được tạo thành từ hai nguyên tố nào?', 'Hydrogen và oxygen', 'Helium và oxygen', 'Hydrogen và nitrogen', 'Carbon và oxygen',
+      'Các chữ H và O trong H₂O là gợi ý.', 'H là hydrogen và O là oxygen. Mỗi phân tử nước có 2 nguyên tử hydrogen và 1 nguyên tử oxygen.'],
+    ['chem', 3, 'Biến đổi nào sau đây không thể đảo ngược?', 'Đốt giấy', 'Nước đá tan chảy', 'Nước đóng băng', 'Hòa tan đường vào nước',
+      'Sau đó bạn có lấy lại được vật ban đầu không?', 'Đốt cháy tạo ra chất mới như tro và khói, nên không thể lấy lại tờ giấy. Các biến đổi còn lại đều có thể đảo ngược.'],
+
+    ['geo', 1, 'Singapore nằm ở châu lục nào?', 'Châu Á', 'Châu Phi', 'Châu Âu', 'Châu Đại Dương',
+      'Đó là châu lục lớn nhất thế giới.', 'Singapore nằm ở Đông Nam Á. Châu Á là châu lục lớn nhất.'],
+    ['geo', 1, 'Đại dương nào lớn nhất thế giới?', 'Thái Bình Dương', 'Đại Tây Dương', 'Ấn Độ Dương', 'Bắc Băng Dương',
+      'Tên của nó có nghĩa là "bình yên".', 'Thái Bình Dương là đại dương lớn nhất và sâu nhất, chiếm khoảng một phần ba bề mặt Trái Đất.'],
+    ['geo', 1, 'Con đường đắp Causeway nối Singapore với nước nào?', 'Malaysia', 'Indonesia', 'Thái Lan', 'Brunei',
+      'Bạn có thể đi xe buýt qua đó để đến Johor Bahru.', 'Causeway nối Woodlands của Singapore với Johor Bahru của Malaysia.'],
+    ['geo', 2, 'Điểm cao tự nhiên nhất của Singapore là ở đâu?', 'Đồi Bukit Timah', 'Núi Faber', 'Đồi Fort Canning', 'Núi Kinabalu',
+      '"Bukit" trong tiếng Mã Lai nghĩa là "đồi".', 'Đồi Bukit Timah cao khoảng 164 m. Núi Kinabalu cao hơn nhiều, nhưng nằm ở Malaysia.'],
+    ['geo', 2, 'Đường tưởng tượng chạy vòng quanh giữa Trái Đất gọi là gì?', 'Đường Xích đạo', 'Kinh tuyến gốc', 'Chí tuyến Bắc', 'Vòng Bắc Cực',
+      'Nó chia Trái Đất thành Bắc bán cầu và Nam bán cầu.', 'Đường Xích đạo chạy vòng quanh giữa Trái Đất, ở vĩ độ 0°.'],
+    ['geo', 2, 'Ngọn núi cao nhất thế giới là núi nào?', 'Núi Everest', 'Núi K2', 'Núi Kilimanjaro', 'Núi Phú Sĩ',
+      'Nó nằm trong dãy Himalaya.', 'Núi Everest, ở biên giới Nepal và Trung Quốc, cao khoảng 8.849 m.'],
+    ['geo', 3, 'Singapore nằm cách đường Xích đạo khoảng 1 độ về phía ___.', 'bắc', 'nam', 'đông', 'tây',
+      'Trên bản đồ, Malaysia ở phía trên Singapore, còn Indonesia ở phía dưới.', 'Singapore nằm cách Xích đạo khoảng 1° về phía bắc, nên trời nóng và mưa nhiều quanh năm.'],
+    ['geo', 3, 'Hoang mạc nóng lớn nhất thế giới là hoang mạc nào?', 'Sahara', 'Gobi', 'Kalahari', 'Atacama',
+      'Nó trải rộng trên phần lớn Bắc Phi.', 'Sahara ở Bắc Phi là hoang mạc nóng lớn nhất. Gobi là hoang mạc lạnh.'],
+    ['geo', 3, 'Vùng nước nào ngăn cách Singapore với Malaysia?', 'Eo biển Johor', 'Eo biển Malacca', 'Eo biển Sunda', 'Biển Đông',
+      'Nó mang tên bang của Malaysia nằm ngay đối diện Woodlands.', 'Eo biển Johor nằm giữa Singapore và bang Johor của Malaysia.'],
+
+    ['hist', 1, 'Singapore kỷ niệm Quốc khánh vào ngày nào?', '9 tháng 8', '31 tháng 8', '1 tháng 10', '1 tháng 5',
+      'Ngày này rơi vào tháng 8 và là một ngày chỉ có một chữ số.', 'Singapore giành độc lập vào ngày 9 tháng 8 năm 1965, nên Quốc khánh là ngày 9 tháng 8.'],
+    ['hist', 1, 'Ai là Thủ tướng đầu tiên của Singapore?', 'Lý Quang Diệu', 'Ngô Tác Đống', 'Lý Hiển Long', 'Yusof Ishak',
+      'Ông lãnh đạo Singapore từ năm 1959 đến năm 1990.', 'Ông Lý Quang Diệu là Thủ tướng từ năm 1959 đến năm 1990.'],
+    ['hist', 1, 'Ai đã xây dựng các Kim tự tháp Giza?', 'Người Ai Cập cổ đại', 'Người La Mã cổ đại', 'Người Viking', 'Người Aztec',
+      'Giza nằm cạnh sông Nin.', 'Người Ai Cập cổ đại xây dựng các kim tự tháp cách đây hơn 4.500 năm, làm lăng mộ cho các pharaoh.'],
+    ['hist', 2, 'Ngài Stamford Raffles đến Singapore vào năm nào?', '1819', '1965', '1942', '1869',
+      'Cách đây hơn 200 năm.', 'Ngài Stamford Raffles đến Singapore năm 1819 và lập một thương cảng của Anh tại đây.'],
+    ['hist', 2, 'Singapore trở thành quốc gia độc lập vào năm nào?', '1965', '1819', '1959', '1945',
+      'Năm 2025, Singapore kỷ niệm sinh nhật lần thứ 60.', 'Singapore giành độc lập vào ngày 9 tháng 8 năm 1965.'],
+    ['hist', 2, 'Ai là người đầu tiên đặt chân lên Mặt Trăng?', 'Neil Armstrong', 'Yuri Gagarin', 'Buzz Aldrin', 'Christopher Columbus',
+      '"Một bước nhỏ của một con người..."', 'Neil Armstrong đặt chân lên Mặt Trăng năm 1969. Yuri Gagarin là người đầu tiên bay vào vũ trụ, còn Buzz Aldrin là người thứ hai bước lên Mặt Trăng.'],
+    ['hist', 3, 'Trong Chiến tranh thế giới thứ hai, nước nào chiếm đóng Singapore từ năm 1942 đến năm 1945?', 'Nhật Bản', 'Đức', 'Ý', 'Thái Lan',
+      'Trong thời gian này, Singapore bị đổi tên thành "Syonan-to".', 'Nhật Bản chiếm đóng Singapore từ năm 1942 đến năm 1945 và đổi tên đảo thành Syonan-to.'],
+    ['hist', 3, 'Theo truyền thuyết, hoàng tử nào đã đặt tên hòn đảo là "Singapura" sau khi nhìn thấy một con sư tử?', 'Sang Nila Utama', 'Parameswara', 'Hang Tuah', 'Ngài Stamford Raffles',
+      'Ông là một hoàng tử đến từ Palembang.', 'Biên niên sử Mã Lai kể rằng Sang Nila Utama nhìn thấy một con vật mà ông tin là sư tử, nên đặt tên đảo là Singapura, nghĩa là "Thành phố Sư tử".'],
+    ['hist', 3, 'Ai là Tổng thống đầu tiên của Singapore?', 'Yusof Ishak', 'Lý Quang Diệu', 'S. R. Nathan', 'Halimah Yacob',
+      'Chân dung của ông được in trên tiền giấy Singapore.', 'Ông Yusof Ishak là Tổng thống đầu tiên của Singapore, từ năm 1965 đến năm 1970. Chân dung ông được in trên tiền giấy Singapore.'],
+
+    ['lit', 1, 'Ai là tác giả của "Charlie và nhà máy sô-cô-la"?', 'Roald Dahl', 'J. K. Rowling', 'Enid Blyton', 'Dr. Seuss',
+      'Ông cũng viết "Matilda" và "The BFG".', 'Roald Dahl viết "Charlie và nhà máy sô-cô-la", "Matilda" và "The BFG".'],
+    ['lit', 1, 'Trong truyện "Cô bé Lọ Lem", Lọ Lem đánh rơi thứ gì ở buổi dạ hội?', 'Một chiếc giày thủy tinh', 'Một chiếc vương miện vàng', 'Một chiếc nhẫn', 'Một quả bí ngô',
+      'Hoàng tử dùng nó để tìm cô.', 'Lọ Lem đánh rơi một chiếc giày thủy tinh, và hoàng tử đi tìm cô gái vừa chân chiếc giày ấy.'],
+    ['lit', 1, 'Trong truyện ngụ ngôn "Rùa và Thỏ", ai thắng cuộc đua?', 'Rùa', 'Thỏ', 'Không ai cả', 'Cáo',
+      '"Chậm mà chắc."', 'Thỏ chắc mẩm mình sẽ thắng nên lăn ra ngủ, và chú rùa chậm chạp nhưng kiên trì đã về đích trước.'],
+    ['lit', 2, 'Cậu bé nào không bao giờ lớn và sống ở xứ sở Neverland?', 'Peter Pan', 'Pinocchio', 'Oliver Twist', 'Tom Sawyer',
+      'Cậu biết bay, và Tinker Bell là bạn của cậu.', 'Peter Pan, nhân vật của nhà văn J. M. Barrie, sống ở Neverland và không bao giờ lớn lên.'],
+    ['lit', 2, 'Ai là tác giả của vở kịch "Romeo và Juliet"?', 'William Shakespeare', 'Charles Dickens', 'Lewis Carroll', 'Mark Twain',
+      'Ông là nhà viết kịch nổi tiếng nhất của nước Anh.', 'William Shakespeare viết "Romeo và Juliet" cách đây hơn 400 năm.'],
+    ['lit', 2, 'Trong truyện "Alice ở xứ sở thần tiên", Alice đi theo con vật nào xuống hang?', 'Chú Thỏ Trắng', 'Mèo Cheshire', 'Chim Dodo', 'Sâu Bướm',
+      'Chú luôn sợ bị trễ và hay xem đồng hồ bỏ túi.', 'Alice đi theo chú Thỏ Trắng, người lúc nào cũng lo bị trễ, xuống hang thỏ.'],
+    ['lit', 3, 'Bài thơ có ba dòng với 5, 7 và 5 âm tiết được gọi là gì?', 'Thơ haiku', 'Thơ limerick', 'Thơ sonnet', 'Thơ ballad',
+      'Thể thơ này đến từ Nhật Bản.', 'Haiku là thể thơ ngắn của Nhật Bản với ba dòng 5, 7 và 5 âm tiết.'],
+    ['lit', 3, 'Chú sư tử trong truyện "Sư tử, phù thủy và cái tủ áo" tên là gì?', 'Aslan', 'Simba', 'Mufasa', 'Leo',
+      'Cuốn sách do C. S. Lewis viết.', 'Aslan là chú sư tử vĩ đại của xứ Narnia trong các cuốn sách của C. S. Lewis.'],
+    ['lit', 3, 'Bài học của truyện "Cậu bé chăn cừu" là gì?', 'Người hay nói dối sẽ không được tin, kể cả khi nói thật', 'Chó sói là loài vật nguy hiểm', 'Phải luôn chăm sóc đàn cừu', 'La hét là cách tốt nhất để được giúp đỡ',
+      'Cậu bé đã lừa dân làng nhiều lần.', 'Cậu bé nói dối nhiều đến nỗi khi sói đến thật, không ai tin cậu nữa. Nói dối sẽ làm mất lòng tin của mọi người.']
+  ];
+
+  var LEVELS = [1, 1, 1, 2, 2, 2, 2, 3, 3, 3];
+  var LEVEL_NAMES = ['', 'Warm-up', 'Getting harder', 'Brain-buster'];
+  var LETTERS = 'ABCD';
+  var BEST_KEY = 'smartest-student-best-vi';
+  var reduceMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  var $ = function (id) { return document.getElementById(id); };
+  var screens = { start: $('start'), play: $('play'), end: $('end') };
+  var ansBtns = Array.prototype.slice.call(document.querySelectorAll('.ans'));
+  var s = { phase: 'start' };
+  var sound = true;
+  var lockTimer = null;
+  var audio = null;
+
+  function shuffle(list) {
+    var a = list.slice();
+    for (var i = a.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = a[i]; a[i] = a[j]; a[j] = t;
+    }
+    return a;
+  }
+
+  // One question from every subject plus two extra, easy questions first, no subject twice in a row.
+  function pickQuestions() {
+    var keys = Object.keys(SUBJECTS);
+    var slots = keys.concat(shuffle(keys).slice(0, 2));
+    for (var tries = 0; tries < 50; tries++) {
+      slots = shuffle(slots);
+      if (slots.every(function (k, i) { return i === 0 || slots[i - 1] !== k; })) break;
+    }
+    var used = [];
+    return slots.map(function (k, i) {
+      var pool = [];
+      BANK.forEach(function (q, id) { if (q[0] === k && used.indexOf(id) === -1) pool.push(id); });
+      var exact = pool.filter(function (id) { return BANK[id][1] === LEVELS[i]; });
+      var list = exact.length ? exact : pool;
+      var id = list[Math.floor(Math.random() * list.length)];
+      used.push(id);
+      return id;
+    });
+  }
+
+  function readBest() { try { var v = parseInt(localStorage.getItem(BEST_KEY), 10); return isNaN(v) ? null : v; } catch (e) { return null; } }
+  function saveBest(n) { try { localStorage.setItem(BEST_KEY, String(n)); } catch (e) {} }
+
+  function score() { return (s.picks || []).filter(function (p) { return p === 0; }).length; }
+  function who() { return s.name ? s.name : 'Người chơi'; }
+
+  function tone(freqs, type, step, peak) {
+    if (!sound) return;
+    try {
+      audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+      freqs.forEach(function (f, i) {
+        var o = audio.createOscillator(), g = audio.createGain();
+        var t = audio.currentTime + i * step;
+        o.type = type; o.frequency.value = f;
+        g.gain.setValueAtTime(0.0001, t);
+        g.gain.exponentialRampToValueAtTime(peak, t + 0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001, t + step + 0.1);
+        o.connect(g); g.connect(audio.destination);
+        o.start(t); o.stop(t + step + 0.15);
+      });
+    } catch (e) {}
+  }
+
+  function show(phase) {
+    s.phase = phase;
+    Object.keys(screens).forEach(function (k) { screens[k].hidden = k !== phase; });
+    window.scrollTo(0, 0);
+  }
+
+  /* ---------- Start ---------- */
+  function renderStart() {
+    var best = readBest();
+    $('best').hidden = best === null;
+    if (best !== null) $('best').innerHTML = 'Kỷ lục trên thiết bị này: <strong>' + best + '/10 bánh quy</strong>';
+    if (s.name) $('name').value = s.name;
+    show('start');
+  }
+
+  function newGame() {
+    var qs = pickQuestions();
+    s = {
+      phase: 'play',
+      name: $('name').value.trim().slice(0, 20),
+      qs: qs,
+      i: 0,
+      picks: qs.map(function () { return null; }),
+      orders: qs.map(function () { return shuffle([0, 1, 2, 3]); }),
+      removed: qs.map(function () { return []; }),
+      hints: qs.map(function () { return false; }),
+      fifty: false,
+      teacher: false,
+      revealed: false
+    };
+    buildLadder();
+    renderPlay();
+    show('play');
+    ansBtns[0].focus();
+  }
+
+  /* ---------- Play ---------- */
+  function buildLadder() {
+    var ol = $('ladder');
+    ol.innerHTML = '';
+    for (var n = 10; n >= 1; n--) {
+      var li = document.createElement('li');
+      li.className = 'rung';
+      li.innerHTML = '<span class="r-num">' + n + '</span><span class="r-sub"></span><span class="r-slot"></span>';
+      li.querySelector('.r-sub').textContent = SUBJECTS[BANK[s.qs[n - 1]][0]];
+      ol.appendChild(li);
+    }
+  }
+
+  function renderLadder(popIndex) {
+    var rungs = $('ladder').children;
+    for (var k = 0; k < rungs.length; k++) {
+      var n = 10 - k, idx = n - 1, li = rungs[k];
+      var pick = s.picks[idx];
+      li.className = 'rung' + (idx === s.i && s.phase === 'play' ? ' now' : '') + (pick !== null ? ' done' : '');
+      var won = pick === 0;
+      li.querySelector('.r-slot').innerHTML = won ? '<i class="cookie' + (idx === popIndex ? ' pop' : '') + '"></i>' : '<i class="plate"></i>';
+      li.setAttribute('aria-label', 'Câu ' + n + ', ' + SUBJECTS[BANK[s.qs[idx]][0]] +
+        (pick === null ? '' : won ? ', đã nhận bánh quy' : ', không có bánh quy'));
+      if (idx === s.i) li.setAttribute('aria-current', 'step'); else li.removeAttribute('aria-current');
+    }
+  }
+
+  function renderPlay(popIndex) {
+    var q = BANK[s.qs[s.i]];
+    var options = [q[3], q[4], q[5], q[6]];
+    var pick = s.picks[s.i];
+
+    $('qn').textContent = s.i + 1;
+    $('subject').textContent = SUBJECTS[q[0]];
+    $('qtext').textContent = q[2];
+
+    ansBtns.forEach(function (btn, pos) {
+      var orig = s.orders[s.i][pos];
+      btn.dataset.orig = orig;
+      btn.querySelector('.ans-in span').textContent = options[orig];
+      var gone = s.removed[s.i].indexOf(orig) !== -1;
+      btn.className = 'ans' + (gone ? ' gone' : '');
+      if (s.revealed) {
+        if (orig === 0) btn.classList.add('correct');
+        if (orig === 0 && pick === 0) btn.classList.add('win');
+        if (orig === pick && pick !== 0) btn.classList.add('wrong');
+        if (orig !== 0 && orig !== pick) btn.classList.add('dim');
+      }
+      btn.disabled = s.revealed || gone;
+      btn.setAttribute('aria-label', LETTERS[pos] + ': ' + options[orig]);
+    });
+
+    $('teacher').hidden = !s.hints[s.i];
+    $('hint').textContent = q[7];
+
+    $('fifty').disabled = s.fifty || s.revealed;
+    $('ask').disabled = s.teacher || s.revealed;
+    $('helpers').hidden = s.revealed && s.fifty && s.teacher;
+
+    var fb = $('feedback');
+    fb.hidden = !s.revealed;
+    if (s.revealed) {
+      var right = pick === 0;
+      var correctPos = s.orders[s.i].indexOf(0);
+      fb.className = 'feedback ' + (right ? 'good' : 'bad');
+      $('fb-head').innerHTML = right
+        ? '<i class="cookie" aria-hidden="true"></i><span>Chính xác! Tặng bạn một chiếc bánh quy.</span>'
+        : '<span>Chưa đúng rồi. Không có bánh quy.</span>';
+      $('fb-ans').innerHTML = right ? '' : 'Đáp án đúng là <strong></strong>';
+      if (!right) $('fb-ans').querySelector('strong').textContent = LETTERS[correctPos] + ': ' + q[3];
+      $('fb-ans').hidden = right;
+      $('fb-why').textContent = q[8];
+      $('next').textContent = s.i < 9 ? 'Câu tiếp theo' : 'Xem kết quả';
+    }
+
+    var n = score();
+    $('jar-n').textContent = n;
+    $('jar-who').textContent = 'bánh quy' + (s.name ? ' của ' + s.name : '');
+    renderLadder(popIndex);
+  }
+
+  function choose(pos) {
+    if (s.phase !== 'play' || s.revealed || lockTimer) return;
+    var btn = ansBtns[pos];
+    if (btn.disabled) return;
+    var orig = parseInt(btn.dataset.orig, 10);
+    ansBtns.forEach(function (b) { b.disabled = true; });
+    $('fifty').disabled = true; $('ask').disabled = true;
+    btn.classList.add('locked');
+    tone([392], 'sine', 0.2, 0.08);
+    lockTimer = setTimeout(function () {
+      lockTimer = null;
+      s.picks[s.i] = orig;
+      s.revealed = true;
+      if (orig === 0) {
+        tone([523, 659, 784, 1047], 'triangle', 0.11, 0.16);
+        renderPlay(s.i);
+        var jar = $('jar');
+        jar.classList.remove('bump'); void jar.offsetWidth; jar.classList.add('bump');
+      } else {
+        tone([233, 175], 'sawtooth', 0.22, 0.06);
+        renderPlay();
+      }
+      $('next').focus({ preventScroll: true });
+      var fb = $('feedback');
+      if (fb.getBoundingClientRect().bottom > window.innerHeight) fb.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'end' });
+    }, reduceMotion ? 350 : 1200);
+  }
+
+  function next() {
+    if (!s.revealed) return;
+    if (s.i < 9) {
+      s.i += 1;
+      s.revealed = false;
+      renderPlay();
+      window.scrollTo(0, 0);
+      var first = ansBtns.filter(function (b) { return !b.disabled; })[0];
+      if (first) first.focus({ preventScroll: true });
+    } else {
+      finish();
+    }
+  }
+
+  function useFifty() {
+    if (s.fifty || s.revealed || lockTimer) return;
+    s.fifty = true;
+    s.removed[s.i] = shuffle([1, 2, 3]).slice(0, 2);
+    renderPlay();
+    var first = ansBtns.filter(function (b) { return !b.disabled; })[0];
+    if (first) first.focus();
+  }
+
+  function useTeacher() {
+    if (s.teacher || s.revealed || lockTimer) return;
+    s.teacher = true;
+    s.hints[s.i] = true;
+    renderPlay();
+  }
+
+  /* ---------- Results ---------- */
+  var RANKS = [
+    [10, 'Học Sinh Thông Minh Nhất!', 'Hũ bánh đầy ắp. Bạn đã trả lời đúng tất cả các câu hỏi.'],
+    [8, 'Học Sinh Xuất Sắc', 'Suýt nữa là đầy hũ rồi. Giỏi lắm!'],
+    [6, 'Ngôi Sao Sáng', 'Đúng hơn một nửa. Chơi thêm lần nữa để lấp đầy hũ nhé.'],
+    [3, 'Học Sinh Chăm Chỉ', 'Cố gắng tốt lắm! Hãy đọc đáp án bên dưới rồi thử lại nhé.'],
+    [0, 'Nhà Thám Hiểm Tò Mò', 'Mỗi câu hỏi là một cơ hội để học điều mới. Thử lại nhé!']
+  ];
+
+  function finish() {
+    var n = score();
+    var best = readBest();
+    var isBest = best === null || n > best;
+    if (isBest) saveBest(n);
+    s.phase = 'end';
+    renderEnd(isBest && best !== null);
+    show('end');
+    $('again').focus({ preventScroll: true });
+    if (n >= 8) tone([523, 659, 784, 1047, 1319], 'triangle', 0.12, 0.16);
+  }
+
+  function renderEnd(newBest) {
+    var n = score();
+    var rank = RANKS.filter(function (r) { return n >= r[0]; })[0];
+    $('end-pre').textContent = s.name ? 'Chơi hay lắm, ' + s.name : 'Kết quả';
+    $('end-title').textContent = rank[1];
+    $('end-line').textContent = rank[2];
+
+    var tray = $('tray');
+    tray.innerHTML = '';
+    for (var i = 0; i < 10; i++) {
+      var el = document.createElement('i');
+      el.className = i < n ? 'cookie' : 'plate';
+      if (i < n && !reduceMotion) { el.classList.add('pop'); el.style.animationDelay = (i * 0.08) + 's'; el.style.animationFillMode = 'backwards'; }
+      tray.appendChild(el);
+    }
+    $('tally').innerHTML = n + '/10 bánh quy<small>' + (newBest ? 'Kỷ lục mới trên thiết bị này!' : '') + '</small>';
+
+    var ol = $('review');
+    ol.innerHTML = '';
+    s.qs.forEach(function (id, idx) {
+      var q = BANK[id], pick = s.picks[idx], right = pick === 0;
+      var li = document.createElement('li');
+      li.innerHTML = '<span class="mark"></span><span class="meta"></span><p class="qt"></p><p class="yours"></p>';
+      li.querySelector('.mark').innerHTML = right ? '<i class="cookie" aria-label="Đúng"></i>' : '<i class="plate" aria-label="Sai"></i>';
+      li.querySelector('.meta').textContent = 'Câu ' + (idx + 1) + ' · ' + SUBJECTS[q[0]];
+      li.querySelector('.qt').textContent = q[2];
+      var y = li.querySelector('.yours');
+      if (right) {
+        y.innerHTML = '<span class="yes">Đúng:</span> <strong></strong>';
+        y.querySelector('strong').textContent = q[3];
+      } else {
+        y.innerHTML = '<span class="no">Bạn chọn:</span> <span class="said"></span> · Đáp án: <strong></strong>';
+        y.querySelector('.said').textContent = pick === null ? '(không trả lời)' : q[3 + pick];
+        y.querySelector('strong').textContent = q[3];
+      }
+      ol.appendChild(li);
+    });
+  }
+
+  /* ---------- Wiring ---------- */
+  $('entry').addEventListener('submit', function (e) { e.preventDefault(); newGame(); });
+  ansBtns.forEach(function (btn, pos) { btn.addEventListener('click', function () { choose(pos); }); });
+  $('next').addEventListener('click', next);
+  $('fifty').addEventListener('click', useFifty);
+  $('ask').addEventListener('click', useTeacher);
+  $('again').addEventListener('click', function () { renderStart(); $('name').focus(); });
+  $('sound').addEventListener('click', function () {
+    sound = !sound;
+    this.textContent = sound ? 'Âm thanh: bật' : 'Âm thanh: tắt';
+    this.setAttribute('aria-pressed', String(sound));
+  });
+  document.addEventListener('keydown', function (e) {
+    if (s.phase !== 'play' || e.metaKey || e.ctrlKey || e.altKey) return;
+    var k = e.key.toLowerCase();
+    var pos = 'abcd'.indexOf(k);
+    if (pos === -1 && '1234'.indexOf(k) !== -1) pos = '1234'.indexOf(k);
+    if (pos !== -1 && k.length === 1) { choose(pos); return; }
+    if (k === 'enter' && s.revealed && e.target.tagName !== 'BUTTON') next();
+  });
+
+  // Keep a game in progress when the page is updated while it is open.
+  function start(data) {
+    var saved = data && data.s;
+    if (saved && saved.phase === 'play' && saved.qs && saved.qs.every(function (id) { return BANK[id]; })) {
+      s = saved;
+      buildLadder(); renderPlay(); show('play');
+    } else if (saved && saved.phase === 'end' && saved.qs && saved.qs.every(function (id) { return BANK[id]; })) {
+      s = saved;
+      buildLadder(); renderEnd(false); show('end');
+    } else {
+      renderStart();
+    }
+  }
+  if (window.claude && window.claude.hot && window.claude.hot.snapshot) {
+    window.claude.hot.snapshot(function () { return { s: s }; });
+  }
+  if (window.claude && window.claude.hot && window.claude.hot.ready) window.claude.hot.ready(start);
+  else start(window.claude && window.claude.hot && window.claude.hot.data || {});
+})();
+</script>
+</body>
+</html>
